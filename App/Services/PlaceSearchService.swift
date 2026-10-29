@@ -26,20 +26,44 @@ struct AppleMapsSearchService: PlaceSearchService {
     let providerName = "Apple Maps"
 
     func suggestions(for query: String, near: Coordinate?) async throws -> [PlaceSuggestion] {
+        guard let near else { return Self.interleave(try await search(query, region: nil), []) }
+        // A regional search alone hides well-known places elsewhere (e.g. "Palacio de Bellas Artes" from San Francisco
+        // returns SF's Palace of Fine Arts), so also run an unbiased search and interleave both.
+        let region = MKCoordinateRegion(center: near.clCoordinate, latitudinalMeters: 50_000, longitudinalMeters: 50_000)
+        async let nearby = search(query, region: region)
+        async let global = search(query, region: nil)
+        return Self.interleave(try await nearby, try await global)
+    }
+
+    /// Alternates both lists, dropping results within 50 m of one already kept.
+    static func interleave(_ first: [PlaceSuggestion], _ second: [PlaceSuggestion]) -> [PlaceSuggestion] {
+        var merged: [PlaceSuggestion] = []
+        for index in 0..<max(first.count, second.count) {
+            for list in [first, second] where index < list.count {
+                let candidate = list[index]
+                let isDuplicate = merged.contains { kept in
+                    guard let a = kept.coordinate, let b = candidate.coordinate else { return kept.id == candidate.id }
+                    return GeoMath.distance(a, b) < 50
+                }
+                if !isDuplicate { merged.append(candidate) }
+            }
+        }
+        return merged
+    }
+
+    private func search(_ query: String, region: MKCoordinateRegion?) async throws -> [PlaceSuggestion] {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         request.resultTypes = [.address, .pointOfInterest]
-        if let near {
-            request.region = MKCoordinateRegion(center: near.clCoordinate, latitudinalMeters: 50_000, longitudinalMeters: 50_000)
-        }
+        if let region { request.region = region }
         do {
             let response = try await MKLocalSearch(request: request).start()
-            return response.mapItems.enumerated().map { index, item in
+            return response.mapItems.map { item in
                 let c = Coordinate(item.placemark.coordinate)
                 return PlaceSuggestion(
-                    id: "\(index)-\(c.formatted)",
+                    id: c.formatted,
                     title: item.name ?? item.placemark.title ?? c.formatted,
-                    subtitle: item.placemark.title ?? "",
+                    subtitle: (item.placemark.title ?? "").replacingOccurrences(of: "\n", with: ", "),
                     coordinate: c,
                     source: .appleMaps
                 )

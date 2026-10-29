@@ -65,6 +65,16 @@ final class SimulatorViewModelTests: XCTestCase {
         XCTAssertTrue(vm.suggestions.isEmpty)
     }
 
+    func testAppleSearchInterleavesNearbyAndGlobalResultsWithoutDuplicates() {
+        func place(_ id: String, _ lat: Double, _ lon: Double) -> PlaceSuggestion {
+            PlaceSuggestion(id: id, title: id, subtitle: "", coordinate: Coordinate(latitude: lat, longitude: lon), source: .appleMaps)
+        }
+        let nearby = [place("sfPalace", 37.802909, -122.448408), place("sfCafe", 37.773095, -122.393701)]
+        let global = [place("cdmxPalacio", 19.435509, -99.141209), place("sfPalaceAgain", 37.802950, -122.448400)]
+        let merged = AppleMapsSearchService.interleave(nearby, global)
+        XCTAssertEqual(merged.map(\.id), ["sfPalace", "cdmxPalacio", "sfCafe"])
+    }
+
     func testShortQueryClearsSuggestions() async {
         let vm = makeViewModel()
         await vm.search("zoc")

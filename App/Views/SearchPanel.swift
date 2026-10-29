@@ -4,6 +4,7 @@ import SwiftUI
 struct SearchPanel: View {
     @Bindable var viewModel: SimulatorViewModel
     @FocusState private var focused: Bool
+    @State private var listHeight: CGFloat = 0
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -51,33 +52,43 @@ struct SearchPanel: View {
             if !viewModel.suggestions.isEmpty {
                 Divider()
                 ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        ForEach(Array(viewModel.suggestions.enumerated()), id: \.element.id) { index, suggestion in
-                            Button {
-                                focused = false
-                                Task { await viewModel.select(suggestion) }
-                            } label: {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(suggestion.title).font(.body).foregroundStyle(.primary)
-                                    if !suggestion.subtitle.isEmpty {
-                                        Text(suggestion.subtitle).font(.caption).foregroundStyle(.secondary)
-                                    }
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 8)
-                                .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityIdentifier("searchResult_\(index)")
-                            Divider().padding(.leading, 12)
-                        }
-                    }
+                    suggestionList
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { listHeight = $0 }
                 }
-                .frame(maxHeight: 280)
+                .scrollBounceBehavior(.basedOnSize)
+                .frame(height: min(listHeight, 280))
             }
         }
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
         .shadow(radius: 4, y: 2)
+    }
+
+    // Translucent styles (.secondary, Divider) are not drawn inside this ScrollView over the material background.
+    private static let subtitleColor = Color(uiColor: .systemGray)
+    private static let separatorColor = Color(uiColor: .opaqueSeparator)
+
+    private var suggestionList: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(Array(viewModel.suggestions.enumerated()), id: \.element.id) { index, suggestion in
+                Button {
+                    focused = false
+                    Task { await viewModel.select(suggestion) }
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(suggestion.title).font(.body).foregroundStyle(.primary)
+                        if !suggestion.subtitle.isEmpty {
+                            Text(suggestion.subtitle).font(.caption).foregroundStyle(Self.subtitleColor)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("searchResult_\(index)")
+                Rectangle().fill(Self.separatorColor).frame(height: 0.5).padding(.leading, 12)
+            }
+        }
     }
 }

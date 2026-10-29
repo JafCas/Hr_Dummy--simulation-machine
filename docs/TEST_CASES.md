@@ -42,6 +42,7 @@ Three layers. Automated layers run in CI on every push/PR (`core` on Linux; `ios
 | --- | --- | --- |
 | TC-APP-01 | `testSearchPopulatesSuggestions` | Search results shown |
 | TC-APP-02 | `testSearchWithNoResultsShowsMessage`, `testSearchErrorIsSurfaced` | Empty and error states |
+| TC-APP-02b | `testAppleSearchInterleavesNearbyAndGlobalResultsWithoutDuplicates` | Apple search shows nearby and worldwide matches (e.g. "Palacio de Bellas Artes" from San Francisco still finds CDMX), duplicates within 50 m dropped |
 | TC-APP-03 | `testShortQueryClearsSuggestions`, `testDebouncedQueryTriggersSearch` | < 2 chars clears; typing triggers debounced search |
 | TC-APP-04 | `testSelectingSuggestionSetsSelectionAndClearsSearch` | Selection, search reset, history entry |
 | TC-APP-05 | `testDropPinUsesReverseGeocodedName`, `testDropPinKeepsPlaceholderWhenGeocodingFails`, `testDropPinIgnoresInvalidCoordinate` | Map pin flow |
