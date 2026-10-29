@@ -1,0 +1,5 @@
+// Shared build settings. Put real values in Config/Secrets.xcconfig (git-ignored).
+GOOGLE_PLACES_API_KEY =
+DEVELOPMENT_TEAM =
+
+#include? "Secrets.xcconfig"

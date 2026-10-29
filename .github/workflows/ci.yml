@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Core package (Linux)
+    runs-on: ubuntu-latest
+    container: swift:6.0
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift test --package-path Packages/LocationSimCore
+
+  ios:
+    name: iOS app (${{ matrix.family }})
+    runs-on: macos-15
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        family: [iPhone, iPad]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Pick simulator
+        id: sim
+        run: echo "udid=$(scripts/pick-simulator.sh ${{ matrix.family }})" >> "$GITHUB_OUTPUT"
+      - name: Build & test (unit + UI)
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project LocationSimulator.xcodeproj \
+            -scheme LocationSimulator \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath TestResults-${{ matrix.family }}.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults-${{ matrix.family }}
+          path: TestResults-${{ matrix.family }}.xcresult
