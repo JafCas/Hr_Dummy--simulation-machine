@@ -17,7 +17,7 @@ struct ContentView: View {
                 map
                 overlays
             }
-            .navigationTitle("Location Simulator")
+            .navigationTitle("Hr dummy")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { toolbar }
             .sheet(isPresented: $showCoordinateEntry) {

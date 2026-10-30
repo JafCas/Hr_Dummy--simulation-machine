@@ -1,4 +1,4 @@
-# Location Simulator (iPhone & iPad)
+# Hr dummy — Location Simulator (iPhone & iPad)
 
 SwiftUI app to pick any location — by **name** (Apple Maps, or Google Places for Google Maps names), by **dropping a pin** on the map, or by pasting **coordinates / a Google Maps link** — and export it as a **GPX** file that Xcode (or the helper script) uses to simulate that location on a real iPhone/iPad or the iOS Simulator.
 
