@@ -7,13 +7,30 @@
 <p align="center"><b>Be anywhere. Without going anywhere.</b><br>
 A laid-back iPhone & iPad sidekick for simulating locations: find a place, drop a pin, export a GPX, done.</p>
 
+## What to expect
+A quick tour of what you get, straight from the iOS 26.5 simulators (iPhone 17 Pro + iPad Pro 13").
+
+<table>
+  <tr>
+    <td align="center" width="33%"><img src="docs/screenshots/iphone-search.jpg" width="230" alt="Searching a place on iPhone"></td>
+    <td align="center" width="33%"><img src="docs/screenshots/iphone-jitter.jpg" width="230" alt="Place card with GPS jitter on iPhone"></td>
+    <td align="center" width="33%"><img src="docs/screenshots/iphone-how-to.jpg" width="230" alt="How to apply sheet on iPhone"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Find a spot</b><br>Search by name or address (Apple Maps, or Google Places with a key).</td>
+    <td align="center"><b>Lock it in</b><br>Place card with exact coordinates, optional GPS jitter (max 20 m), Export GPX / Copy.</td>
+    <td align="center"><b>Apply it</b><br>Built-in guide: Xcode, <code>simctl</code> or <code>pymobiledevice3</code>.</td>
+  </tr>
+</table>
+
 <p align="center">
-  <img src="docs/screenshots/iphone-search.jpg" width="230" alt="Searching a place on iPhone">
-  <img src="docs/screenshots/iphone-jitter.jpg" width="230" alt="Place card with GPS jitter on iPhone">
-  <img src="docs/screenshots/iphone-how-to.jpg" width="230" alt="How to apply sheet on iPhone">
+  <img src="docs/screenshots/ipad-pin.jpg" width="700" alt="Dropping a pin on iPad"><br>
+  <b>Drop a pin on iPad</b>: tap anywhere, get the street address, side panel layout.
 </p>
+
 <p align="center">
-  <img src="docs/screenshots/ipad-pin.jpg" width="700" alt="Dropping a pin on iPad">
+  <img src="docs/screenshots/home-icon.png" width="300" alt="Hr dummy on the iPhone home screen"><br>
+  <b>On your home screen</b> as "Hr dummy".
 </p>
 
 ## What's the vibe
