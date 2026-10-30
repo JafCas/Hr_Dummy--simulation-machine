@@ -7,10 +7,12 @@
 #   scripts/simulate-location.sh device --gpx file.gpx     # first waypoint of the GPX
 #   scripts/simulate-location.sh simulator|device clear    # stop simulating
 #
+# SIM_DEVICE=<udid|name> picks a simulator when several are booted (default: booted).
 # Device mode needs `pip3 install pymobiledevice3` and a tunnel: `sudo pymobiledevice3 remote tunneld`.
 set -euo pipefail
+sim="${SIM_DEVICE:-booted}"
 
-usage() { sed -n '2,10p' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
+usage() { sed -n '2,11p' "$0" | sed 's/^# \{0,1\}//'; exit 1; }
 
 target="${1:-}"; shift || true
 [[ "$target" == "simulator" || "$target" == "device" ]] || usage
@@ -33,7 +35,7 @@ validate() {
 points=()
 case "$1" in
     clear)
-        if [[ "$target" == simulator ]]; then xcrun simctl location booted clear
+        if [[ "$target" == simulator ]]; then xcrun simctl location "$sim" clear
         else pymobiledevice3 developer dvt simulate-location clear; fi
         exit 0 ;;
     --gpx)
@@ -50,9 +52,9 @@ first="${points[0]}"
 
 if [[ "$target" == simulator ]]; then
     if [[ ${#points[@]} -gt 1 ]]; then
-        xcrun simctl location booted start --interval=5 "${points[@]}"
+        xcrun simctl location "$sim" start --interval=5 "${points[@]}"
     else
-        xcrun simctl location booted set "$first"
+        xcrun simctl location "$sim" set "$first"
     fi
 else
     pymobiledevice3 developer dvt simulate-location set -- "${first%,*}" "${first#*,}"
