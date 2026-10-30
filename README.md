@@ -7,28 +7,57 @@
 <p align="center"><b>Be anywhere. Without going anywhere.</b><br>
 A laid-back iPhone & iPad sidekick for simulating locations: find a place, drop a pin, export a GPX, done.</p>
 
-<p align="center">
-  <img src="docs/screenshots/iphone-search.jpg" width="230" alt="Searching a place on iPhone">
-  <img src="docs/screenshots/iphone-jitter.jpg" width="230" alt="Place card with GPS jitter on iPhone">
-  <img src="docs/screenshots/iphone-how-to.jpg" width="230" alt="How to apply sheet on iPhone">
-</p>
-<p align="center">
-  <img src="docs/screenshots/ipad-pin.jpg" width="700" alt="Dropping a pin on iPad">
-</p>
-
 ## What's the vibe
 Need your phone to "be" in Mexico City, Paris, or that taco spot around the corner? Hr dummy finds the exact coordinate and hands it to Apple's own location-simulation tools (Xcode, `simctl`, or `pymobiledevice3`). No jailbreak, no sketchy tweaks, no stress.
 
 > **Why GPX and not "change the GPS" from the app?** iOS doesn't let apps change the location the rest of the system sees (only jailbreak tweaks can, and the App Store says no). Apple's supported way is developer location simulation, and Hr dummy is the chill front end for it: it picks the spot and gives you the file or command.
 
 ## What it does
-- **Search by name:** places and addresses via Apple Maps (no key needed), or **Google Places API (New)** for Google Maps names when `GOOGLE_PLACES_API_KEY` is set.
-- **Drop a pin:** tap anywhere on the map and get the street address back.
-- **Paste it in:** `lat, lon`, Google Maps URLs (`/place/…!3d…!4d…`, `@lat,lon`, `?q=`, `?query=`) or `maps.app.goo.gl` short links.
-- **Accurate within 20 m:** coordinates use 6 decimals (≈0.1 m). Optional **GPS jitter** adds realistic noise, keeping every point within 1–20 m (hard cap at 20 m).
-- **Take it with you:** export a GPX (AirDrop, Files…) or copy the coordinates, GPX, `simctl` or `pymobiledevice3` command.
-- **Remembers stuff:** history of recent spots.
-- **Fits the screen:** bottom card on iPhone, side panel on iPad.
+A SwiftUI app for iPhone and iPad (iOS/iPadOS 17+). Find the spot, fine-tune it, ship it as a GPX. Every screenshot below comes from the iOS 26.5 Simulator.
+
+<table>
+  <tr>
+    <td width="55%">
+      <b>Search by name</b><br>
+      Type a place or address and pick a result. Uses Apple Maps by default (no key needed), or <b>Google Places API (New)</b> for Google Maps names when <code>GOOGLE_PLACES_API_KEY</code> is set. Nearby and worldwide results are mixed, so "Palacio de Bellas Artes" finds the one in CDMX even if the map is in San Francisco.
+    </td>
+    <td align="center"><img src="docs/screenshots/iphone-search.jpg" width="230" alt="Searching a place on iPhone"></td>
+  </tr>
+  <tr>
+    <td>
+      <b>See the spot</b><br>
+      The place card shows the name, full address, exact coordinates (6 decimals, ≈0.1 m) and where the result came from. Export the GPX or copy the coordinates, GPX, <code>simctl</code> or <code>pymobiledevice3</code> command.
+    </td>
+    <td align="center"><img src="docs/screenshots/iphone-place-card.jpg" width="230" alt="Place card on iPhone"></td>
+  </tr>
+  <tr>
+    <td>
+      <b>Accurate within 20 m, with optional wobble</b><br>
+      Turn on <b>GPS jitter</b> for realistic noise: choose a radius of 1–20 m (hard cap at 20 m) and how many points to generate (one every 5 s). Leave it off to get the exact point.
+    </td>
+    <td align="center"><img src="docs/screenshots/iphone-jitter.jpg" width="230" alt="Place card with GPS jitter on iPhone"></td>
+  </tr>
+  <tr>
+    <td>
+      <b>How to apply, built in</b><br>
+      The <b>?</b> button explains how to apply the location on a physical device (Xcode), in the iOS Simulator (<code>simctl</code>), or on a device without Xcode (<code>pymobiledevice3</code>), using the current coordinates.
+    </td>
+    <td align="center"><img src="docs/screenshots/iphone-how-to.jpg" width="230" alt="How to apply sheet on iPhone"></td>
+  </tr>
+</table>
+
+**Drop a pin (iPad):** tap anywhere on the map and get the street address back. On iPad everything lives in a side panel, so the map gets the full screen.
+
+<p align="center"><img src="docs/screenshots/ipad-pin.jpg" width="600" alt="Dropping a pin on iPad"></p>
+
+**Search on iPad:** same flow as the iPhone, but the results and the place card stay in the side panel while you look around the map.
+
+<p align="center"><img src="docs/screenshots/ipad-place-panel.jpg" width="600" alt="Place selected from search on iPad"></p>
+
+Also in the box:
+- **Paste it in:** `lat, lon`, Google Maps URLs (`/place/…!3d…!4d…`, `@lat,lon`, `?q=`, `?query=`) or `maps.app.goo.gl` short links (link button, top right).
+- **Remembers stuff:** history of recent spots (clock button).
+- **Takes it with you:** GPX export through the share sheet (AirDrop, Files…).
 
 ## Quick start
 ```bash
